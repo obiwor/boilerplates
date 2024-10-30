@@ -2,11 +2,13 @@
 
 my temporary boilerplates project manager
 
+### Method 1: Direct use (one-liner)
 ```bash
-# Method 1: Direct use (one-liner)
-curl -s https://raw.githubusercontent.com/obiwor/boilerplates/refs/heads/main/create.sh | bash -s -- fastapi my-project
-
-# Method 2: Local installation
+curl -s https://raw.githubusercontent.com/obiwor/boilerplates/refs/heads/main/create.sh | bash -s -- c my-project
+```
+or 
+### Method 2: Local installation
+```bash
 # Step 1: Download the script
 curl -o create.sh https://raw.githubusercontent.com/obiwor/boilerplates/refs/heads/main/create.sh
 # Step 2: Make it executable
