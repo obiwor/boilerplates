@@ -7,7 +7,7 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 # Configuration
-REPO_URL="https://github.com/user/boilerplates.git"
+REPO_URL="https://github.com/obiwor/boilerplates.git"
 TEMPLATES_DIR="templates"
 
 # helper function
