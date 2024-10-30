@@ -1,0 +1,62 @@
+---
+Language: Cpp
+DisableFormat: false
+
+# Indentation
+UseTab: Always
+TabWidth: 8
+IndentWidth: 8
+ContinuationIndentWidth: 8
+
+# Changement du style des fonctions
+AlwaysBreakAfterDefinitionReturnType: None  # Était 'All'
+AlwaysBreakAfterReturnType: None           # Était 'All'
+
+# Alignement
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignEscapedNewlines: Left
+AlignOperands: true
+AlignTrailingComments: false
+
+# Sauts de ligne
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakBeforeMultilineStrings: false
+BinPackArguments: true
+BinPackParameters: true
+BreakBeforeBraces: Linux
+BreakBeforeTernaryOperators: false
+BreakStringLiterals: false
+
+# Espaces
+SpaceAfterCStyleCast: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInCStyleCastParentheses: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+# Colonnes et wrapping
+ColumnLimit: 80
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
+ReflowComments: false
+
+# Autres options
+IncludeBlocks: Preserve
+IndentCaseLabels: false
+IndentPPDirectives: None
+PointerAlignment: Right
+SortIncludes: false
+StatementMacros: ['SYSCALL_DEFINE0', 'SYSCALL_DEFINE1', 'SYSCALL_DEFINE2', 'SYSCALL_DEFINE3', 'SYSCALL_DEFINE4', 'SYSCALL_DEFINE5', 'SYSCALL_DEFINE6']
+
+# Modification par rapport au style Linux standard
+InsertBraces: true

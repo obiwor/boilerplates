@@ -1,0 +1,30 @@
+
+DOXYFILE := Doxyfile
+DOC_DIR := docs/project
+THEME_DIR := vendor/docs
+
+
+prepare:
+	@mkdir -p $(DOC_DIR)
+
+copy_theme:
+	@echo "Copie du thème..."
+	@cp -R $(THEME_DIR) $(DOC_DIR)/html/ || { echo "Erreur lors de la copie"; exit 1; }
+
+generate-docs: prepare
+	@echo "Génération de la documentation..."
+	@doxygen $(DOXYFILE)
+
+docs: generate-docs
+	@$(MAKE) copy_theme
+
+clean-docs:
+	@echo "Nettoyage des documents..."
+	@rm -rf $(DOC_DIR)
+
+help-docs:
+	@echo "Available commands related to the documentation:"
+	@echo "  make docs          - Build the documentation"
+	@echo "  make clean-docs    - Remove the current docs build"
+
+.PHONY: generate-docs clean prepare  help-docs

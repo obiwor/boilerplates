@@ -1,0 +1,38 @@
+Checks: '
+  bugprone-*,
+  cert-*,
+  clang-analyzer-*,
+  misc-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  -readability-magic-numbers,
+  -readability-braces-around-statements,
+  -readability-implicit-bool-conversion,
+  -readability-uppercase-literal-suffix,
+  -bugprone-easily-swappable-parameters,
+  -cert-dcl37-c,
+  -misc-unused-parameters,
+  -misc-definitions-in-headers
+  '
+
+CheckOptions:
+  - key: readability-identifier-naming.FunctionCase
+    value: lower_case
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+  - key: readability-identifier-naming.MacroDefinitionCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.ConstantCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.StructCase
+    value: lower_case
+  - key: readability-identifier-naming.TypedefCase
+    value: lower_case
+  - key: bugprone-argument-comment.StrictMode
+    value: 1
+  - key: readability-function-cognitive-complexity.Threshold
+    value: 25
+
+# Configuration spécifique pour le style Linux C
+FormatStyle: file # Utilise le .clang-format défini ci-dessus

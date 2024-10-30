@@ -1,0 +1,132 @@
+CC := clang
+CFLAGS := -Wall -Wextra -Werror -std=c11 -pedantic
+BUILD_DIR := build
+SRC_DIR := src
+INCLUDES_DIR := includes
+TEST_DIR := tests
+OBJ_DIR := $(BUILD_DIR)/obj
+
+INCLUDE_FLAGS := -I$(CURDIR)/$(INCLUDES_DIR)
+
+SRCS := $(wildcard $(SRC_DIR)/*.c)
+OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+TARGET := renderer
+
+PROJECT_ROOT := $(shell pwd)
+
+CLANG_TIDY := clang-tidy
+CLANG_FORMAT := clang-format
+TIDY_CHECKS := -*,readability-*,performance-*,portability-*,bugprone-*,cert-*
+
+# Trouve tous les fichiers source et header
+ALL_SOURCES := $(shell find $(SRC_DIR) $(INCLUDES_DIR) -type f \( -name "*.c" -o -name "*.h" \))
+
+# Ajout de verbosité
+# TODO improve this by shell variable
+VERBOSE ?= 1
+ifeq ($(VERBOSE),1)
+    MAKEFLAGS += --no-silent
+endif
+
+.PHONY: all clean debug verbose-build  format format-check tidy tidy-fix lint help
+
+# Règle explicite pour créer les répertoires
+$(BUILD_DIR) $(OBJ_DIR):
+	@echo "Creating directory $@"
+	@mkdir -p $@
+
+# Règle pour l'exécutable avec verbosité
+$(BUILD_DIR)/$(TARGET): $(OBJS) | $(BUILD_DIR)
+	@echo "Linking $@"
+	$(CC) $(OBJS) -o $@ $(LDFLAGS) || (echo "Linking failed"; exit 1)
+	@echo "Build successful: $@"
+
+# Règle pour les objets avec verbosité
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+	@echo "Compiling $<"
+	$(CC) $(CFLAGS) $(INCLUDE_FLAGS) -c $< -o $@ || (echo "Compilation failed for $<"; exit 1)
+
+
+all: $(BUILD_DIR)/$(TARGET)
+
+verbose-build: debug
+	@echo "Starting verbose build..."
+	@$(MAKE) all VERBOSE=1
+
+debug:
+	@echo "=== Build Configuration ==="
+	@echo "Compiler: $(CC)"
+	@echo "CFLAGS: $(CFLAGS)"
+	@echo "INCLUDE_FLAGS: $(INCLUDE_FLAGS)"
+	@echo "LDFLAGS: $(LDFLAGS)"
+	@echo ""
+	@echo "=== Source Files ==="
+	@echo "Sources found: $(SRCS)"
+	@echo "Objects to build: $(OBJS)"
+	@echo "Target: $(BUILD_DIR)/$(TARGET)"
+	@echo ""
+	@echo "=== Directory Status ==="
+	@echo "Build directory exists: $$(test -d $(BUILD_DIR) && echo 'yes' || echo 'no')"
+	@echo "Object directory exists: $$(test -d $(OBJ_DIR) && echo 'yes' || echo 'no')"
+	@echo ""
+	@echo "=== File Status ==="
+	@for src in $(SRCS); do \
+		echo "Source file: $$src exists: $$(test -f $$src && echo 'yes' || echo 'no')"; \
+	done
+
+clean:
+	@echo "Cleaning build directory"
+	@rm -rf $(BUILD_DIR)
+	@echo "Clean complete"
+
+
+# Format commands
+format:
+	@echo "Formatting all sources..."
+	@$(CLANG_FORMAT) -i --style=file $(ALL_SOURCES)
+	@echo "Formatting complete"
+
+format-check:
+	@echo "Checking format..."
+	@$(CLANG_FORMAT) --dry-run -Werror --style=file $(ALL_SOURCES)
+	@echo "Format check complete"
+
+# Tidy commands
+tidy:
+	@echo "Running clang-tidy..."
+	@$(CLANG_TIDY) $(SRCS) -p .vscode --checks=$(TIDY_CHECKS) -- $(CFLAGS) $(INCLUDE_FLAGS)
+	@echo "Tidy check complete"
+
+tidy-fix:
+	@echo "Running clang-tidy with fixes..."
+	@$(CLANG_TIDY) $(SRCS) -p .vscode --checks=$(TIDY_CHECKS) --fix -- $(CFLAGS) $(INCLUDE_FLAGS)
+	@echo "Tidy fix complete"
+
+# Combine format and tidy
+lint: format tidy
+
+
+generate-compile-commands:
+	@echo "[" > .vscode/compile_commands.json
+	@for src in $(SRCS); do \
+		echo "  {" >> .vscode/compile_commands.json; \
+		echo "    \"directory\": \"$(PROJECT_ROOT)\"," >> .vscode/compile_commands.json; \
+		echo "    \"command\": \"$(CC) -c $(CFLAGS) $(INCLUDE_FLAGS) -I/usr/include/SDL2 -I/usr/include $$src -o $(OBJ_DIR)/$$(basename $$src .c).o\"," >> .vscode/compile_commands.json; \
+		echo "    \"file\": \"$(PROJECT_ROOT)/$$src\"," >> .vscode/compile_commands.json; \
+		echo "    \"output\": \"$(PROJECT_ROOT)/$(OBJ_DIR)/$$(basename $$src .c).o\"" >> .vscode/compile_commands.json; \
+		echo "  }," >> .vscode/compile_commands.json; \
+	done
+	@sed -i '$$s/,$//' .vscode/compile_commands.json
+	@echo "]" >> .vscode/compile_commands.json
+
+# Help command
+help: help-docs
+	@echo "Available commands:"
+	@echo "  make          - Build the project"
+	@echo "  make clean    - Remove build files"
+	@echo "  make format   - Format all source files"
+	@echo "  make format-check - Check if files are properly formatted"
+	@echo "  make tidy     - Run clang-tidy checks"
+	@echo "  make tidy-fix - Run clang-tidy and apply fixes"
+	@echo "  make lint     - Run both format and tidy"
+	@echo "  make generate-compile-commands -Generate  compile_commands.json file"

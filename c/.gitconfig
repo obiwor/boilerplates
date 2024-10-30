@@ -1,0 +1,17 @@
+[pull]
+	rebase = true
+[rebase]
+	autoStash = true
+[submodule]
+	recurse = true
+[feature]
+	manyFiles = true
+[core]
+	untrackedcache = true
+[push]
+	autoSetupRemote = true
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

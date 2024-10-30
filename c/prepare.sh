@@ -1,0 +1,1 @@
+mkdir -p includes tests build/obj build/tests src includes/project includes/vendors scripts
